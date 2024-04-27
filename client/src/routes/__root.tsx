@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { Avatar, Box, Button, Flex, Heading, Spacer, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useState } from "react";
 
 export const Route = createRootRoute({
@@ -8,7 +8,7 @@ export const Route = createRootRoute({
 });
 
 function Root() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn] = useState(false);
 
   return (
     <>
