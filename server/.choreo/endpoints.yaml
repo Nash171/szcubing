@@ -1,5 +1,7 @@
 version: 0.1
 endpoints:
-  - name: Greeting Service
+  - name: SZCubing Service
     port: 3000
     type: REST
+    context: /contests
+    
