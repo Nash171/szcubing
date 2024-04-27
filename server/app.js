@@ -13,7 +13,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 // use cors only in development
 if (process.env.NODE_ENV === 'development') {
   app.use(cors({ origin: 'http://localhost:5173' }));
