@@ -3,18 +3,20 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@dotenvx/dotenvx": "^0.35.1",
-    "cookie-parser": "~1.4.6",
-    "cors": "^2.8.5",
-    "debug": "~4.3.4",
-    "express": "~4.19.2",
-    "http-errors": "~2.0.0",
-    "morgan": "~1.10.0",
-    "nodemon": "^3.1.0",
-    "pug": "^3.0.2"
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "@types/cors": "^2.8.17",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }

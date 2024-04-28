@@ -16,7 +16,7 @@ export default function Contests() {
   const [contests, setContests] = useState([]);
   
   useEffect(() => {
-    fetchContests().then((data) => setContests(data.contests));   
+    fetchContests().then((data) => setContests(data));   
   }, []);
 
 

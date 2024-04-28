@@ -1,5 +1,5 @@
 import axios from "axios";
-import oauth from 'axios-oauth-client';
+import oauth from "axios-oauth-client";
 
 declare global {
   interface Window {
@@ -13,27 +13,34 @@ declare global {
 }
 
 const api = axios.create({
-  baseURL: window?.configs?.apiUrl || "http://localhost:3000/",
+  baseURL: window?.configs?.apiUrl || "http://localhost:8080/",
 });
 
-// consumerKey, consumerSecret and tokenUrl represent variables to which respective environment variables were read
-const getClientCredentials = oauth.clientCredentials(
-  api,
-  window?.configs?.tokenUrl,
-  window?.configs?.consumerKey,
-  window?.configs?.consumerSecret
-);
+let accessToken = "";
 
-const auth = await getClientCredentials('');
-const accessToken = auth.access_token;
+try {
+  const getClientCredentials = oauth.clientCredentials(
+    api,
+    window?.configs?.tokenUrl || "http://localhost:8080/",
+    window?.configs?.consumerKey,
+    window?.configs?.consumerSecret
+  );
+
+  const auth = await getClientCredentials("");
+  accessToken = auth.access_token;
+} catch (error) {
+  console.error(error);
+}
 
 export const fetchContests = async () => {
-  
-  
-  const response = await api.get("/contests",{
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
-});
-  return response.data;
+  try {
+    const response = await api.get("/contests", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 };
