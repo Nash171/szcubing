@@ -3,5 +3,4 @@ endpoints:
   - name: SZCubing Service
     port: 3000
     type: REST
-    context: /contests
     
