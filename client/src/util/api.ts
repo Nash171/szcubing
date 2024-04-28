@@ -44,3 +44,16 @@ export const fetchContests = async () => {
     console.error(error);
   }
 };
+
+export const fetchContest = async (contestId: string) => {
+  try {
+    const response = await api.get(`/contests/${contestId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}

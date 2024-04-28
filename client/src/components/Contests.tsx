@@ -7,42 +7,64 @@ import {
   Th,
   Tbody,
   Td,
+  Badge,
+  Button,
+  Stack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Page from "./Page";
 import { fetchContests } from "../util/api";
+import { Link } from "@tanstack/react-router";
 
 export default function Contests() {
   const [contests, setContests] = useState([]);
-  
-  useEffect(() => {
-    fetchContests().then((data) => setContests(data));   
-  }, []);
 
+  useEffect(() => {
+    fetchContests().then((data) => setContests(data));
+  }, []);
 
   return (
     <div>
       <Page>
         <TableContainer>
           <Table variant="simple">
-            <TableCaption>Active Contests</TableCaption>
+            <TableCaption>Contests</TableCaption>
             <Thead>
               <Tr>
                 <Th>Contest</Th>
                 <Th>Type</Th>
-                <Th>Started</Th>
-                <Th>End</Th>
-                <Th>Compete</Th>
+                <Th>Status</Th>
+                <Th></Th>
               </Tr>
             </Thead>
             <Tbody>
               {contests.map((contest: any) => (
-                <Tr key={contest.id}>
+                <Tr key={contest.id} py={"5"}>
                   <Td>{contest.name}</Td>
                   <Td>{contest.type}</Td>
-                  <Td>{contest.started}</Td>
-                  <Td>{contest.end}</Td>
-                  <Td>{contest.compete ? "Yes" : "No"}</Td>
+                  <Td>
+                    {contest.status === "RUNNING" ? (
+                      <Badge colorScheme="green">Running</Badge>
+                    ) : (
+                      <Badge colorScheme="red">Ended</Badge>
+                    )}
+                  </Td>
+                  <Td>
+                    <Stack direction="row" spacing={2}>
+                      <Link to={`/contests/${contest.id}`}>
+                        <Button
+                          colorScheme="blue"
+                          size={"xs"}
+                          isDisabled={contest.status !== "RUNNING"}
+                        >
+                          Compete
+                        </Button>
+                      </Link>
+                      <Button colorScheme="green" size={"xs"}>
+                        Leaderboard
+                      </Button>
+                    </Stack>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
