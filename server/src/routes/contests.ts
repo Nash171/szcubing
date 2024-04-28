@@ -41,7 +41,6 @@ router.get("/:id", (req: Request, res: Response) => {
 router.put("/:id", (req: Request, res: Response) => {
   const id = req.params.id;
   const contest = contests.find((c: any) => c.id === id);
-  contest.id = req.body.id;
   contest.name = req.body.name;
   contest.type = req.body.type;
   contest.status = req.body.status;

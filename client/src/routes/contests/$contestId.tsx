@@ -10,12 +10,22 @@ import {
   Heading,
   Input,
   Stack,
+  Stat,
+  StatLabel,
+  StatNumber,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
+  Table,
   Tabs,
+  Tag,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Page from "../../components/Page";
@@ -28,21 +38,24 @@ export const Route = createFileRoute("/contests/$contestId")({
 });
 
 const toMilliseconds = (time: string) => {
-  const [minutesStr, remainingStr = "00.000"] = time.split(":");
-  const [secondsStr, millisecondsStr = "000"] = remainingStr.split(".");
-
+  const [remainingStr = "0.000", minutesStr] = time.split(":").reverse();
+  const [secondsStr, millisecondsStr = "00"] = remainingStr.split(".");
+  console.log(remainingStr, minutesStr, secondsStr, millisecondsStr);
   const minutes = parseInt(minutesStr) || 0;
   const seconds = parseInt(secondsStr);
-  const milliseconds = parseInt(millisecondsStr);
+  const milliseconds = parseInt(String(millisecondsStr).padEnd(3, "0"));
 
-  return minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+  const ms = minutes * 60 * 1000 + seconds * 1000 + milliseconds;
+  console.log(ms);
+  return isNaN(ms) || ms === 0 ? "DNF" : ms;
 };
 
 const toTime = (timeMs: number) => {
   const minutes = Math.floor(timeMs / 1000 / 60);
   const seconds = Math.floor((timeMs / 1000) % 60);
-  const milliseconds = Math.floor(timeMs % 1000);
-  return `${minutes}:${String(seconds).padStart(2, "0")}.${String(milliseconds).padStart(2, "0")}`;
+  const milliseconds = Math.round((timeMs % 1000) / 10);
+  console.log(minutes, seconds, milliseconds);
+  return `${minutes ? `${minutes}:` : ""}${String(seconds).padStart(minutes ? 2 : 1, "0")}.${String(milliseconds).padEnd(2, "0")}`;
 };
 
 function Contest() {
@@ -53,27 +66,40 @@ function Contest() {
       no: i + 1,
       scramble: "",
       time: "",
-      timeMs: 0,
+      timeMs: "DNS" as number | "DNF" | "DNS",
       penalty: 0,
     }))
   );
   const [result, setResult] = useState({
-    best: "",
+    best: -1,
+    worst: -1,
     ao5: "",
   });
 
   useEffect(() => {
     if (tabIndex === 5) {
       // take a copy of the solves
-      const times = [...solves];
-      times.sort((a, b) => a.timeMs - b.timeMs);
+      let times = [...solves];
+      times.sort((a, b) => {
+        if (a.timeMs === "DNF" || a.timeMs === "DNS") {
+          return 1;
+        } else if (b.timeMs === "DNF" || b.timeMs === "DNS") {
+          return -1;
+        } else {
+          return a.timeMs - b.timeMs;
+        }
+      });
 
-      const ao5 =
-        times.slice(1, 4).reduce((acc, cur) => acc + cur.timeMs, 0) / 3;
-
+      const ao5 = Math.floor(
+        times
+          .slice(1, 4)
+          .reduce((acc, cur) => acc + (cur.timeMs as number), 0) / 3
+      );
+      console.log(times, times.slice(1, 4), ao5);
       setResult({
-        ao5: toTime(ao5),
-        best: times[0].time,
+        ao5: isNaN(ao5) ? "DNF" : toTime(ao5),
+        best: times[0].no,
+        worst: times[4].no,
       });
     }
   }, [tabIndex]);
@@ -115,10 +141,16 @@ function Contest() {
           <BreadcrumbLink>Contest#{contest.id}</BreadcrumbLink>
         </BreadcrumbItem>
       </Breadcrumb>
-      <Stack direction="column" spacing={4} alignItems={"center"}>
+      <Stack
+        direction="column"
+        spacing={4}
+        alignItems={"center"}
+        width={"100%"}
+        marginTop={"20px"}
+      >
         <Heading size="md">{contest.name}</Heading>
         <Badge>{contest.type}</Badge>
-        <Box>
+        <Box width={"100%"} maxWidth={"800px"}>
           <Tabs index={tabIndex} onChange={handleTabsChange}>
             <TabList>
               <Tab>1</Tab>
@@ -129,21 +161,59 @@ function Contest() {
               <Tab>Result</Tab>
             </TabList>
             <TabPanels>
-              {solves.map((solve) => (
+              {solves.map((solve, i) => (
                 <TabPanel key={solve.no}>
-                  <Text>{solve.scramble}</Text>
+                  <Text fontSize="3xl">{contest.scrambles[i]}</Text>
                   <Input
                     value={solve.time}
                     onChange={(e) => setSolveTime(solve.no, e.target.value)}
                     placeholder="0:00.00"
+                    width={"200px"}
+                    size={"lg"}
+                    margin={"10px"}
                   ></Input>
-                  <Button onClick={nextSolve}>Next Solve</Button>
+                  <br></br>
+                  <Button
+                    colorScheme="blue"
+                    onClick={nextSolve}
+                    marginTop={"10px"}
+                  >
+                    Next Solve
+                  </Button>
                 </TabPanel>
               ))}
-              <TabPanel key="result">
-                <Text>Best {result.best}</Text>
-                <Text>Ao5 {result.ao5}</Text>
-                <Button onClick={nextSolve}>Submit</Button>
+              <TabPanel
+                key="result"
+                display={"flex"}
+                alignItems={"center"}
+                flexDirection={"column"}
+              >
+                <Table maxWidth={"400px"}>
+                  <Tbody>
+                    {solves.map((solve) => (
+                      <Tr key={solve.no}>
+                        <Td>Solve #{solve.no}</Td>
+                        <Td>
+                          {solve.time
+                            ? <Text color={solve.no == result.best ? "green.500" : solve.no == result.worst ? "red.500" : ""}>{toTime(solve.timeMs as number)}</Text>
+                            : "-"}
+                        </Td>
+                      </Tr>
+                    ))}
+                    <Tr>
+                      <Td fontWeight={"bold"}>Ao5</Td>
+                      <Td fontWeight={"bold"}>{result.ao5}</Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+                <Button
+                  colorScheme="blue"
+                  onClick={nextSolve}
+                  width={"100px"}
+                  marginTop={"20px"}
+                >
+                  Submit
+                </Button>
               </TabPanel>
             </TabPanels>
           </Tabs>
