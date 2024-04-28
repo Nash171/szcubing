@@ -8,4 +8,7 @@ export default defineConfig({
     react(),
     TanStackRouterVite(),
   ],
+  build: {
+    target: "ES2022"
+  },
 })

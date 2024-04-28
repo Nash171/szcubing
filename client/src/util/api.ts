@@ -12,11 +12,13 @@ declare global {
   }
 }
 
+const api = axios.create({
+  baseURL: window?.configs?.apiUrl || "http://localhost:3000/",
+});
+
 // consumerKey, consumerSecret and tokenUrl represent variables to which respective environment variables were read
 const getClientCredentials = oauth.clientCredentials(
-  axios.create({
-    baseURL: window?.configs?.apiUrl || "http://localhost:3000/",
-  }),
+  api,
   window?.configs?.tokenUrl,
   window?.configs?.consumerKey,
   window?.configs?.consumerSecret
@@ -25,12 +27,9 @@ const getClientCredentials = oauth.clientCredentials(
 const auth = await getClientCredentials('');
 const accessToken = auth.access_token;
 
-// create axios instance
-const api = axios.create({
-  baseURL: window?.configs?.apiUrl || "http://localhost:3000/",
-});
-
 export const fetchContests = async () => {
+  
+  
   const response = await api.get("/contests",{
     headers: {
       'Authorization': `Bearer ${accessToken}`
