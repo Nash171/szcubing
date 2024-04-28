@@ -106,8 +106,8 @@ function Contest() {
     <Page>
       <Breadcrumb separator="/" alignSelf={"flex-start"}>
         <BreadcrumbItem>
-          <BreadcrumbLink>
-            <Link to="/">Home</Link>
+          <BreadcrumbLink to="/" as={Link}>
+            Home
           </BreadcrumbLink>
         </BreadcrumbItem>
 
