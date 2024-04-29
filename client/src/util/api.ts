@@ -57,3 +57,19 @@ export const fetchContest = async (contestId: string) => {
     console.error(error);
   }
 }
+
+
+export const postResult = async (contestId: string, results: any) => {
+  try {
+    const response = await api.post(`/contests/${contestId}/result`, results, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+

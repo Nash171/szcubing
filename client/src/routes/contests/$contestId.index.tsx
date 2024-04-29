@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { fetchContest } from "../../util/api";
+import { fetchContest, postResult } from "../../util/api";
 import {
   Badge,
   Box,
@@ -10,27 +10,21 @@ import {
   Heading,
   Input,
   Stack,
-  Stat,
-  StatLabel,
-  StatNumber,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Table,
   Tabs,
-  Tag,
   Tbody,
   Td,
   Text,
-  Th,
-  Thead,
   Tr,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Page from "../../components/Page";
 
-export const Route = createFileRoute("/contests/$contestId")({
+export const Route = createFileRoute("/contests/$contestId/")({
   component: Contest,
   loader: ({ params: { contestId } }) => {
     return fetchContest(contestId);
@@ -64,7 +58,6 @@ function Contest() {
   const [solves, setSolves] = useState(
     Array.from({ length: 5 }, (_, i) => ({
       no: i + 1,
-      scramble: "",
       time: "",
       timeMs: "DNS" as number | "DNF" | "DNS",
       penalty: 0,
@@ -74,6 +67,7 @@ function Contest() {
     best: -1,
     worst: -1,
     ao5: "",
+    ao5Ms: 0,
   });
 
   useEffect(() => {
@@ -98,6 +92,7 @@ function Contest() {
       console.log(times, times.slice(1, 4), ao5);
       setResult({
         ao5: isNaN(ao5) ? "DNF" : toTime(ao5),
+        ao5Ms: ao5,
         best: times[0].no,
         worst: times[4].no,
       });
@@ -126,6 +121,22 @@ function Contest() {
 
       return nextIndex <= 5 ? nextIndex : prevIndex;
     });
+  }
+
+
+  async function handlePostResults() {
+    try {
+      await postResult(contest.id, {
+        player: {
+          id: `TEST${Math.floor(Math.random() * 10000)}`,
+          name: `Player Name ${Math.floor(Math.random() * 10000)}`,
+        },
+        solves,
+        result,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -178,7 +189,7 @@ function Contest() {
                     onClick={nextSolve}
                     marginTop={"10px"}
                   >
-                    Next Solve
+                    {tabIndex === 4 ? "Result" : "Next Solve"}
                   </Button>
                 </TabPanel>
               ))}
@@ -208,7 +219,7 @@ function Contest() {
                 </Table>
                 <Button
                   colorScheme="blue"
-                  onClick={nextSolve}
+                  onClick={handlePostResults}
                   width={"100px"}
                   marginTop={"20px"}
                 >

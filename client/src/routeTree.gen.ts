@@ -13,7 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutImport } from './routes/about'
 import { Route as IndexImport } from './routes/index'
-import { Route as ContestsContestIdImport } from './routes/contests/$contestId'
+import { Route as ContestsContestIdIndexImport } from './routes/contests/$contestId.index'
+import { Route as ContestsContestIdLeaderboardImport } from './routes/contests/$contestId.leaderboard'
 
 // Create/Update Routes
 
@@ -27,10 +28,16 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ContestsContestIdRoute = ContestsContestIdImport.update({
-  path: '/contests/$contestId',
+const ContestsContestIdIndexRoute = ContestsContestIdIndexImport.update({
+  path: '/contests/$contestId/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const ContestsContestIdLeaderboardRoute =
+  ContestsContestIdLeaderboardImport.update({
+    path: '/contests/$contestId/leaderboard',
+    getParentRoute: () => rootRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -44,8 +51,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport
       parentRoute: typeof rootRoute
     }
-    '/contests/$contestId': {
-      preLoaderRoute: typeof ContestsContestIdImport
+    '/contests/$contestId/leaderboard': {
+      preLoaderRoute: typeof ContestsContestIdLeaderboardImport
+      parentRoute: typeof rootRoute
+    }
+    '/contests/$contestId/': {
+      preLoaderRoute: typeof ContestsContestIdIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -56,7 +67,8 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AboutRoute,
-  ContestsContestIdRoute,
+  ContestsContestIdLeaderboardRoute,
+  ContestsContestIdIndexRoute,
 ])
 
 /* prettier-ignore-end */

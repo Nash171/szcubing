@@ -41,7 +41,9 @@ export default function Contests() {
               {contests.map((contest: any) => (
                 <Tr key={contest.id} py={"5"}>
                   <Td>{contest.name}</Td>
-                  <Td>{contest.type}</Td>
+                  <Td>
+                    <Badge>{contest.type}</Badge>
+                  </Td>
                   <Td>
                     {contest.status === "RUNNING" ? (
                       <Badge colorScheme="green">Running</Badge>
@@ -54,15 +56,17 @@ export default function Contests() {
                       <Link to={`/contests/${contest.id}`}>
                         <Button
                           colorScheme="blue"
-                          size={"xs"}
+                          size={"sm"}
                           isDisabled={contest.status !== "RUNNING"}
                         >
                           Compete
                         </Button>
                       </Link>
-                      <Button colorScheme="green" size={"xs"}>
-                        Leaderboard
-                      </Button>
+                      <Link to={`/contests/${contest.id}/leaderboard`}>
+                        <Button colorScheme="green" size={"sm"}>
+                          Leaderboard
+                        </Button>
+                      </Link>
                     </Stack>
                   </Td>
                 </Tr>
