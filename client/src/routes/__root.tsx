@@ -21,7 +21,7 @@ export const Route = createRootRoute({
 function Root() {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userDetails, setUserDetails] = useState({ name: "" });
+  const [userDetails, setUserDetails] = useState<any>({ name: "" });
 
   useEffect(() => {
     let isUserInfoSet = false;
@@ -58,9 +58,15 @@ function Root() {
     window.location.href = "/auth/login";
   }
   function handleLogoutClick() {
-    localStorage.removeItem("userDetails");
+    setUserDetails({});
     setLoggedIn(false);
-    window.location.href = "/auth/logout";
+    localStorage.removeItem('userDetails');
+
+    // Redirect to Choreo logout with session_hint
+    const sessionHint = Cookies.get('session_hint');
+    window.location.href = `/auth/logout?session_hint=${sessionHint}`;
+
+    Cookies.remove('userinfo', { path: '/' });
   }
 
 
