@@ -38,7 +38,7 @@ function Leaderboard() {
         </BreadcrumbItem>
 
         <BreadcrumbItem>
-          <BreadcrumbLink>Contest#{contest.id}</BreadcrumbLink>
+          <BreadcrumbLink to={`/contests/${contest.id}`} as={Link}>Contest#{contest.id}</BreadcrumbLink>
         </BreadcrumbItem>
       </Breadcrumb>
       <Stack

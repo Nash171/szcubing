@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, Navigate, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { fetchContest, postResult } from "../../util/api";
 import {
   Badge,
@@ -21,8 +21,9 @@ import {
   Text,
   Tr,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Page from "../../components/Page";
+import { UserContext } from "../../context/userdetails";
 
 export const Route = createFileRoute("/contests/$contestId/")({
   component: Contest,
@@ -71,6 +72,8 @@ function Contest() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate({ from: '/contests/:contestId' });
+
+  const { loggedIn, userDetails } = useContext(UserContext);
 
   useEffect(() => {
     if (tabIndex === 5) {
@@ -132,7 +135,7 @@ function Contest() {
       await postResult(contest.id, {
         player: {
           id: `TEST${Math.floor(Math.random() * 10000)}`,
-          name: `Player Name ${Math.floor(Math.random() * 10000)}`,
+          name: userDetails.name,
         },
         solves,
         result,
@@ -144,8 +147,11 @@ function Contest() {
     }
   }
 
-  return (
-    <Page>
+  if (!loggedIn) {
+    window.location.href = "/auth/login";
+  }
+
+  return loggedIn && <Page>
       <Breadcrumb separator="/" alignSelf={"flex-start"}>
         <BreadcrumbItem>
           <BreadcrumbLink to="/" as={Link}>
@@ -237,5 +243,5 @@ function Contest() {
         </Box>
       </Stack>
     </Page>
-  );
+  ;
 }
