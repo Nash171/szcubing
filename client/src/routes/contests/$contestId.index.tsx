@@ -1,4 +1,4 @@
-import { Link, Navigate, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fetchContest, postResult } from "../../util/api";
 import {
   Badge,

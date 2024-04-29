@@ -59,6 +59,7 @@ function Root() {
   }
   function handleLogoutClick() {
     localStorage.removeItem("userDetails");
+    setLoggedIn(false);
     window.location.href = "/auth/logout";
   }
 
