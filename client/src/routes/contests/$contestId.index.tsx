@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fetchContest, postResult } from "../../util/api";
 import {
   Badge,
@@ -69,6 +69,8 @@ function Contest() {
     ao5: "",
     ao5Ms: 0,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate({ from: '/contests/:contestId' });
 
   useEffect(() => {
     if (tabIndex === 5) {
@@ -126,6 +128,7 @@ function Contest() {
 
   async function handlePostResults() {
     try {
+      setIsSubmitting(true);
       await postResult(contest.id, {
         player: {
           id: `TEST${Math.floor(Math.random() * 10000)}`,
@@ -134,7 +137,9 @@ function Contest() {
         solves,
         result,
       });
+      navigate({ to: "/contests/$contestId/leaderboard" });
     } catch (error) {
+      setIsSubmitting(false);
       console.error(error);
     }
   }
@@ -222,6 +227,7 @@ function Contest() {
                   onClick={handlePostResults}
                   width={"100px"}
                   marginTop={"20px"}
+                  isDisabled={isSubmitting}
                 >
                   Submit
                 </Button>
